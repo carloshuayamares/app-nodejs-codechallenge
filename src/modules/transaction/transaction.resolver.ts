@@ -1,35 +1,24 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Mutation, Query, Args } from '@nestjs/graphql';
 import { TransactionService } from './transaction.service';
-import { Transaction } from './entities/transaction.entity';
-import { CreateTransactionInput } from './dto/create-transaction.input';
-import { UpdateTransactionInput } from './dto/update-transaction.input';
+import { CreateTransactionInput } from './entities/transaction.entity';
+import { TransactionResponseDto } from './dto/transaction-response.dto';
 
-@Resolver(() => Transaction)
+@Resolver()
 export class TransactionResolver {
   constructor(private readonly transactionService: TransactionService) {}
 
-  @Mutation(() => Transaction)
-  createTransaction(@Args('createTransactionInput') createTransactionInput: CreateTransactionInput) {
-    return this.transactionService.create(createTransactionInput);
+  @Mutation(() => TransactionResponseDto) // escritura
+  async createTransaction(
+    @Args('input') input: CreateTransactionInput
+  ): Promise<TransactionResponseDto> {
+    return this.transactionService.createTransaction(input);
   }
 
-  @Query(() => [Transaction], { name: 'transaction' })
-  findAll() {
-    return this.transactionService.findAll();
-  }
-
-  @Query(() => Transaction, { name: 'transaction' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.transactionService.findOne(id);
-  }
-
-  @Mutation(() => Transaction)
-  updateTransaction(@Args('updateTransactionInput') updateTransactionInput: UpdateTransactionInput) {
-    return this.transactionService.update(updateTransactionInput.id, updateTransactionInput);
-  }
-
-  @Mutation(() => Transaction)
-  removeTransaction(@Args('id', { type: () => Int }) id: number) {
-    return this.transactionService.remove(id);
+  @Query(() => TransactionResponseDto) // lectura
+  async getTransaction(
+    @Args('transactionExternalId') transactionExternalId: string
+  ): Promise<TransactionResponseDto> {
+    
+    return this.transactionService.getTransaction(transactionExternalId);
   }
 }
