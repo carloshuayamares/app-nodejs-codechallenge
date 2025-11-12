@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 
 import { Transaction } from './entities/transaction.entity';
 import { TransactionType } from './entities/transaction-type.entity';
@@ -10,18 +10,17 @@ import { TransactionStatus } from './entities/transaction-status.entity';
   imports: [
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
+      useFactory: () => ({
         type: 'postgres',
-        host: configService.get('DB_HOST', 'localhost'),
-        port: configService.get('DB_PORT', 5432),
-        username: configService.get('DB_USERNAME', 'postgres'), // configService.get posible cambio
-        password: configService.get('DB_PASSWORD', 'postgres'),
-        database: configService.get('DB_DATABASE', 'wallet_challenge'),
-        entities: [Transaction, TransactionType, TransactionStatus], // posible cambio
-        synchronize: true, // configService.get('NODE_ENV') === 'development',
-        logging: configService.get('NODE_ENV') === 'development',
+        host: process.env.DB_HOST || 'localhost',
+        port: parseInt(process.env.DB_PORT || '5432'),
+        username: process.env.DB_USERNAME || 'postgres',
+        password: process.env.DB_PASSWORD || 'postgres',
+        database: process.env.DB_DATABASE || 'wallet_challenge',
+        entities: [Transaction, TransactionType, TransactionStatus], 
+        synchronize: true,
+        logging: true,
       }),
-      inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([Transaction, TransactionType, TransactionStatus]),
   ],

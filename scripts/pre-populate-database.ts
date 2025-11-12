@@ -2,7 +2,7 @@
 
 import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
-import { seedDatabase } from '../src/database/seed';
+import { prePopulateDatabase } from './database-utils';
 import { Transaction } from '../src/database/entities/transaction.entity';
 import { TransactionType } from '../src/database/entities/transaction-type.entity';
 import { TransactionStatus } from '../src/database/entities/transaction-status.entity';
@@ -18,8 +18,8 @@ async function createDataSource(): Promise<DataSource> {
     password: process.env.DB_PASSWORD || 'postgres',
     database: process.env.DB_DATABASE || 'wallet_challenge',
     entities: [Transaction, TransactionType, TransactionStatus],
-    synchronize: process.env.NODE_ENV === 'development',
-    logging: process.env.NODE_ENV === 'development',
+    synchronize: true,
+    logging: true,
   });
 }
 
@@ -29,12 +29,9 @@ async function main() {
   try {
     await dataSource.initialize();
     console.log('Database connection established');
-
-    await seedDatabase(dataSource);
-
-    console.log('Database seeding completed successfully');
+    await prePopulateDatabase(dataSource);
   } catch (error) {
-    console.error('Error seeding database:', error);
+    console.error('Error pre-populate database:', error);
     process.exit(1);
   } finally {
     await dataSource.destroy();

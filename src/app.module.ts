@@ -19,13 +19,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.graphql'),
     }),
-    // TypeOrmModule.forRoot({
-    //   type: 'sqlite',
-    //   database: 'database.sqlite',
-    //   entities: [__dirname + '/**/*.entity{.ts,.js}'],
-    //   synchronize: true,
-    // }),
-    DatabaseModule, // agregar directamente el valor
+    DatabaseModule,
     KafkaModule,
     TransactionModule,
     AntiFraudModule,

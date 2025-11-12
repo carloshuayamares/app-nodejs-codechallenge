@@ -1,5 +1,4 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { KafkaService } from '../../kafka/kafka.service';
 import { TransactionService } from '../transaction/transaction.service';
 import { Transaction } from 'src/database/entities/transaction.entity';
@@ -9,16 +8,12 @@ import { EachMessagePayload } from 'kafkajs';
 export class AntiFraudService implements OnModuleInit {
   constructor(
     private kafkaService: KafkaService,
-    private configService: ConfigService,
     private transactionService: TransactionService
-  ) {}
+  ) { }
 
   async onModuleInit() {
     await this.kafkaService.subscribeToTopic(
-      this.configService.get(
-        'KAFKA_TRANSACTION_CREATED_TOPIC',
-        'transaction.created'
-      ),
+      process.env.KAFKA_TRANSACTION_CREATED_TOPIC || 'transaction.created',
       this.processTransactionCreated.bind(this)
     );
   }
@@ -28,11 +23,11 @@ export class AntiFraudService implements OnModuleInit {
   ): Promise<void> {
     try {
       const message: Transaction = JSON.parse(payload.message.value?.toString() ?? '');
-      console.log('Processing transaction for anti-fraud:', message);
+      console.log('Transaction processing for anti-fraud:', message);
 
       const { transactionExternalId, value } = message;
 
-      const status = value > 1000 ? 'rejected' : 'approved';
+      const status = value <= 1000 ? 'Approved' : 'Rejected';
 
       await this.transactionService.updateTransactionStatus(
         transactionExternalId,
@@ -40,20 +35,14 @@ export class AntiFraudService implements OnModuleInit {
       );
 
       await this.kafkaService.sendMessage(
-        this.configService.get(
-          'KAFKA_TRANSACTION_STATUS_TOPIC',
-          'transaction.status'
-        ),
+        process.env.KAFKA_TRANSACTION_STATUS_TOPIC || 'transaction.status',
         {
           transactionExternalId,
           status,
           value,
         }
       );
-
-      console.log(
-        `Transaction ${transactionExternalId} ${status} by anti-fraud service`
-      );
+      console.log(`Transaction ${transactionExternalId} ${status} by anti-fraud service`);
     } catch (error) {
       console.error('Error processing anti-fraud:', error);
     }

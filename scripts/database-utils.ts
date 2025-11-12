@@ -1,11 +1,10 @@
 import { DataSource } from 'typeorm';
-import { TransactionType } from './entities/transaction-type.entity';
-import { TransactionStatus } from './entities/transaction-status.entity';
+import { TransactionType } from '../src/database/entities/transaction-type.entity';
+import { TransactionStatus } from '../src/database/entities/transaction-status.entity';
 
-export async function seedDatabase(dataSource: DataSource) {
+export async function prePopulateDatabase(dataSource: DataSource) {
   const transactionTypeRepository = dataSource.getRepository(TransactionType);
-  const transactionStatusRepository =
-    dataSource.getRepository(TransactionStatus);
+  const transactionStatusRepository = dataSource.getRepository(TransactionStatus);
 
   const transactionTypes = [
     { id: 1, name: 'Transfer' },
@@ -23,9 +22,9 @@ export async function seedDatabase(dataSource: DataSource) {
   }
 
   const transactionStatuses = [
-    { id: 1, name: 'pending' },
-    { id: 2, name: 'approved' },
-    { id: 3, name: 'rejected' },
+    { id: 1, name: 'Pending' },
+    { id: 2, name: 'Approved' },
+    { id: 3, name: 'Rejected' },
   ];
 
   for (const status of transactionStatuses) {
@@ -36,6 +35,5 @@ export async function seedDatabase(dataSource: DataSource) {
       await transactionStatusRepository.save(status);
     }
   }
-
-  console.log('Database seeded successfully');
+  console.log('Database pre-populate successfully');
 }

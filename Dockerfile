@@ -19,5 +19,5 @@ RUN npm run build
 # Expose port
 EXPOSE 3000
 
-# Start in development mode with hot reload
+# Execute seed script and start Wallet App
 CMD ["npm", "run", "start:with-seed"]

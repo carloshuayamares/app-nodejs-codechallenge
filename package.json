@@ -5,8 +5,10 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "main": "dist/main.js",
   "scripts": {
-    "build": "nest build",
+    "build": "tsc",
+    "start:build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "node dist/src/main.js",
     "start:dev": "nest start --watch",
@@ -18,7 +20,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "seed": "node dist/scripts/seed-database.js",
+    "seed": "node dist/scripts/pre-populate-database.js",
     "start:with-seed": "npm run seed && npm run start",
     "docker:up": "docker-compose up -d"
   },

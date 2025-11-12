@@ -10,10 +10,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
 
   constructor(private configService: ConfigService) {
     this.kafka = new Kafka({
-      clientId: this.configService.get(
-        'KAFKA_CLIENT_ID',
-        'wallet-transaction-service'
-      ),
+      clientId: this.configService.get('KAFKA_CLIENT_ID', 'wallet-transaction-service'),
       brokers: [this.configService.get('KAFKA_BROKER', 'localhost:9092')],
     });
   }
@@ -21,10 +18,7 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
   async onModuleInit() {
     this.producer = this.kafka.producer();
     this.consumer = this.kafka.consumer({
-      groupId: this.configService.get(
-        'KAFKA_GROUP_ID',
-        'wallet-transaction-group'
-      ),
+      groupId: this.configService.get('KAFKA_GROUP_ID', 'wallet-transaction-group'),
     });
 
     await this.producer.connect();

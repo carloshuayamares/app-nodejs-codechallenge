@@ -27,7 +27,7 @@ export class TransactionService {
     input: CreateTransactionInput
   ): Promise<TransactionResponseDto> {
     const pendingStatus = await this.transactionStatusRepository.findOne({
-      where: { name: 'pending' },
+      where: { name: 'Pending' },
     });
 
     if (!pendingStatus) {
