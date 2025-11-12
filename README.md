@@ -15,14 +15,28 @@ cp .env.example .env
 ```
 
 3. **Start the application and services:**
-  - **Script Pre-Population**: An initial query is executed to create the transaction types and transaction states.
-
 ```bash
 npm run build
 npm run docker:up
 ```
+  - **Script Pre-Population**: In the deployment of docker compose, an initial query is executed to create the transaction types and transaction states.
 
+### Important Information (Script Pre-Population)
+```bash
+  // Description of the possible values ​​for: transferTypeId
+  [
+    { id: 1, name: 'Transfer' },
+    { id: 2, name: 'Payment' },
+    { id: 3, name: 'Withdrawal' },
+  ];
 
+  // Description of the possible values ​​for: transactionStatus
+  [
+    { id: 1, name: 'Pending' },
+    { id: 2, name: 'Approved' },
+    { id: 3, name: 'Rejected' },
+  ];
+```
 The application will be available at:
 - **GraphQL Playground**: http://localhost:3000/graphql
 - **Kafka UI**: http://localhost:8080
@@ -35,10 +49,10 @@ The application will be available at:
 ```graphql
 mutation {
   createTransaction(input: {
-    accountExternalIdDebit: "550e8400-e29b-41d4-a716-446655440000"
-    accountExternalIdCredit: "550e8400-e29b-41d4-a716-446655440001"
+    accountExternalIdDebit: "uuid-debit-code-generate"
+    accountExternalIdCredit: "uuid-credit-code-generate"
     tranferTypeId: 1
-    value: 500
+    value: 999
   }) {
     transactionExternalId
     transactionType {
@@ -63,10 +77,10 @@ mutation {
         "name": "Transfer"
       },
       "transactionStatus": {
-        "name": "pending"
+        "name": "Pending"
       },
-      "value": 500,
-      "createdAt": "2024-01-01T00:00:00.000Z"
+      "value": 999,
+      "createdAt": "2026-01-01T00:00:00.000Z"
     }
   }
 }
@@ -77,7 +91,7 @@ mutation {
 **GraphQL Query:**
 ```graphql
 query {
-  getTransaction(transactionExternalId: "c98c1180-0dc8-4240-a9be-e5649ca14a43") {
+  getTransaction(transactionExternalId: "uuid-of-create-transaction") {
     transactionExternalId
     transactionType {
       name
@@ -87,6 +101,24 @@ query {
     }
     value
     createdAt
+  }
+}
+```
+**Expected Response:**
+```json
+{
+  "data": {
+    "getTransaction": {
+      "transactionExternalId": "generated-uuid",
+      "transactionType": {
+        "name": "Transfer"
+      },
+      "transactionStatus": {
+        "name": "Approved"
+      },
+      "value": 999,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    }
   }
 }
 ```
