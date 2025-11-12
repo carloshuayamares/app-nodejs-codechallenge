@@ -1,11 +1,10 @@
 {
   "name": "app-nodejs-codechallenge",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Wallet with basic functionalities as a technical challenge.",
+  "author": "C.H.",
   "private": true,
   "license": "UNLICENSED",
-  "main": "dist/main.js",
   "scripts": {
     "build": "tsc",
     "start:build": "nest build",
